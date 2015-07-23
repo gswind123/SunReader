@@ -1,6 +1,7 @@
 package reader.sun.common;
 
 /**
+ * Record and manager user configure info
  * Created by yw_sun on 2015/7/20.
  */
 public class SunUserConfig {

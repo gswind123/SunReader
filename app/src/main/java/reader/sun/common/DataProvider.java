@@ -6,6 +6,7 @@ import reader.sun.common.model.DataLocator;
 import reader.sun.common.model.DataModel;
 
 /**
+ * Manager data from src to memory
  * Created by yw_sun on 2015/7/21.
  */
 public interface DataProvider {
