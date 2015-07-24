@@ -14,37 +14,15 @@ import reader.sun.sunreader.model.TextDataModel;
 import reader.sun.sunreader.widget.SunTextPaperView;
 
 /**
+ * DataProvider for full-text books
  * Created by yw_sun on 2015/7/21.
  */
 public class TextDataProvider implements DataProvider {
+    /** Constants for text data processing */
+    public final int TEXT_CAPACITY = 0x8000; //32768
 
-
-    private String mData = "《野草》英文译本序\n" +
-            "\n" +
-            "　　·鲁迅·\n" +
-            "\n" +
-            "　　冯Y·S·先生由他的友人给我看《野草》的英文译本，并且要我说几句话。可惜我不懂英文，\n" +
-            "　　只能自己说几句。但我希望，译者将不嫌我只做了他所希望的一半的。\n" +
-            "\n" +
-            "　　这二十多篇小品，如每篇末尾所注，是一九二四至二六年在北京所作，陆续发表于期刊《语丝》\n" +
-            "　　上的。大抵仅仅是随时的小感想。因为那时难于直说，所以有时措辞就很含糊了。\n" +
-            "\n" +
-            "　　现在举几个例罢。因为讽刺当时盛行的失恋诗，作《我的失恋》，因为憎恶社会上旁观者之多，\n" +
-            "　　作《复仇》第一篇，又因为惊异于青年之消沉，作《希望》。《这样的战士》，是有感于文人学士们\n" +
-            "　　帮助军阀而作。《腊叶》，是为爱我者的想要保存我而作的。段祺瑞政府枪击徒手民众后，作《淡淡\n" +
-            "　　的血痕中》，其时我已避居别处；奉天派和直隶派军阀战争的时候，作《一觉》，此后我就不能住在\n" +
-            "　　北京了。\n" +
-            "\n" +
-            "　　所以，这也可以说，大半是废驰的地狱边沿的惨白色小花，当然不会美丽。但这地狱也必须失掉。\n" +
-            "　　这是由几个有雄辩和辣手，而当时还未得志的英雄们的脸色和语气所告诉我的。我于是作《失掉的好\n" +
-            "　　地狱》。\n" +
-            "\n" +
-            "　　后来，我不再作这样的东西了。日在变化的时代，已不许这样的文章，甚而至于这样的感想存在。\n" +
-            "　　我想，这也许倒是好的罢。为译本而作的序言，也应该在这里结束了。\n" +
-            "\n" +
-            "　　〔一九三一年〕十一月五日。\n" +
-            "\n" +
-            "　　〔选自《二心集》〕\n";
+    /** Data in memory */
+    private String mData = "";
 
     @Override
     public void parseFileToMem(File srcFile, DataLocator locator) {
