@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -57,6 +56,7 @@ public class TextBookInfo extends BookInfo {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
             doc = docBuilder.parse(in);
+
         }catch(ParserConfigurationException e) {
             Log.e("reader.sun.sunreader","TextBookInfo::"+mBookName+" ParserConfigurationException:"+e.getMessage());
         }catch(IOException e) {

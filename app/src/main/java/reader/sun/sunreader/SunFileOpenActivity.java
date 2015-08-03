@@ -17,8 +17,6 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 
-import reader.sun.sunreader.R;
-import reader.sun.sunreader.SunBaseActivity;
 import reader.sun.sunreader.model.FileInfoModel;
 import reader.sun.sunreader.util.SunFileOpenManager;
 
@@ -189,7 +187,7 @@ public class SunFileOpenActivity extends SunBaseActivity {
     private boolean isFileSupported(String filePath) {
         boolean isSupported = false;
         String path_segments[] = filePath.split(".");
-        if(path_segments[path_segments.length-1].equals("txt")) {
+        if(path_segments[path_segments.length-1].equalsIgnoreCase("txt")) {
             isSupported = true;
         }
         return isSupported;

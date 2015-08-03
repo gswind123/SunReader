@@ -14,13 +14,10 @@ import reader.sun.sunreader.model.TextDataModel;
 import reader.sun.sunreader.widget.SunTextPaperView;
 
 /**
- * DataProvider for full-text books
+ * DataProvider for some full-text book
  * Created by yw_sun on 2015/7/21.
  */
 public class TextDataProvider implements DataProvider {
-    /** Constants for text data processing */
-    public final int TEXT_CAPACITY = 0x8000; //32768
-
     /** Data in memory */
     private String mData = "";
 

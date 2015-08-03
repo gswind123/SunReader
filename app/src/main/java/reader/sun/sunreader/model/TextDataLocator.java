@@ -14,6 +14,14 @@ public class TextDataLocator extends DataLocator {
     public int mEndIndex = 0;
 
     @Override
+    public Object clone() {
+        TextDataLocator res = new TextDataLocator();
+        res.mStartIndex = this.mStartIndex;
+        res.mEndIndex = this.mEndIndex;
+        return res;
+    }
+
+    @Override
     public boolean isEmpty() {
         if(mEndIndex <= mStartIndex) {
             return true;

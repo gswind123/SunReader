@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
-import reader.sun.common.DataProvider;
 import reader.sun.common.model.DataLocator;
 
 /**
@@ -13,7 +12,7 @@ import reader.sun.common.model.DataLocator;
  */
 public class SunPaperView extends View {
     protected boolean hasMeasured = false;
-    protected DataLocator mCurrentLocator = null;
+    protected DataLocator mCurrentLocator = new DataLocator();
 
     public SunPaperView(Context context) {
         super(context);
@@ -28,6 +27,9 @@ public class SunPaperView extends View {
         if(hasMeasured) {
             invalidate();
         }
+    }
+    public DataLocator getLocator() {
+        return (DataLocator)mCurrentLocator.clone();
     }
 
     //Override this to set up data

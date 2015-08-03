@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.view.View;
 
 import reader.sun.common.SunUserConfig;
 import reader.sun.common.foundation.util.StringUtil;
@@ -13,7 +12,6 @@ import reader.sun.common.foundation.util.SunDeviceUtil;
 import reader.sun.common.widget.SunPaperView;
 import reader.sun.sunreader.model.TextDataLocator;
 import reader.sun.sunreader.model.TextDataModel;
-import reader.sun.sunreader.util.TextDataProvider;
 
 /**
  * Created by yw_sun on 2015/7/17.
@@ -81,6 +79,9 @@ public class SunTextPaperView extends SunPaperView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         refreshConfig();
+        if(mPageContent.isEmpty()) {
+            return ;
+        }
         /**
          * IMPORTANT:The text-layout method is closely related to
          * {#createPageFullLocatorFromXXX} in {#TextDataProvider}.
