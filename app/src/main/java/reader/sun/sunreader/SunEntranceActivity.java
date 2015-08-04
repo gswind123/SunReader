@@ -2,9 +2,18 @@ package reader.sun.sunreader;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import reader.sun.sunreader.model.TextBookInfo;
+import reader.sun.sunreader.util.SunFileOpenManager;
+import reader.sun.sunreader.util.TextBookProcessor;
 
 
 public class SunEntranceActivity extends SunBaseActivity {
@@ -17,13 +26,33 @@ public class SunEntranceActivity extends SunBaseActivity {
         hello.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setClass(SunEntranceActivity.this, SunReaderActivity.class);
-                startActivityForResult(intent,1);
+                SunFileOpenManager.goFileOpen(SunEntranceActivity.this);
+//                Intent intent = new Intent();
+//                intent.setClass(SunEntranceActivity.this, SunReaderActivity.class);
+//                startActivityForResult(intent,1);
             }
         });
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == SunFileOpenManager.GET_TEXT_FILE && resultCode == RESULT_OK) {
+            String fileName = data.getExtras().getString(SunFileOpenManager.FILE_PATH);
+            String[] file_segs = fileName.split("\\/");
+            String fileDir = fileName.replace(file_segs[file_segs.length-1],"");
+            TextBookInfo bookInfo = TextBookProcessor.generateBookInfo(fileName);
+            try{
+                FileOutputStream out = new FileOutputStream(fileDir+"book_info_1.xml");
+                bookInfo.save(out);
+                TextBookInfo infoNew = new TextBookInfo();
+                FileInputStream in = new FileInputStream(fileDir+"book_info_1.xml");
+                infoNew.load(in);
+                bookInfo = infoNew;
+            }catch(IOException e) {
+                Log.e("SunEntranceActivity", e.getMessage());
+            }
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

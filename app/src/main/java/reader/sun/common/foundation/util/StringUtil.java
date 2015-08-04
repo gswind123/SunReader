@@ -9,4 +9,15 @@ public class StringUtil {
             return true;
         } else return false;
     }
+    static public int toInt(String str) {
+        if(emptyOrNull(str)) {
+            return 0;
+        }
+        int res = 0;
+        try{
+            res = Integer.parseInt(str);
+        }catch(NumberFormatException e) {
+        }
+        return res;
+    }
 }

@@ -17,10 +17,12 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 
+import reader.sun.common.foundation.util.StringUtil;
 import reader.sun.sunreader.model.FileInfoModel;
 import reader.sun.sunreader.util.SunFileOpenManager;
 
 /**
+ * Activity for opening file
  * Created by yw_sun on 2015/7/16.
  */
 public class SunFileOpenActivity extends SunBaseActivity {
@@ -73,8 +75,8 @@ public class SunFileOpenActivity extends SunBaseActivity {
         }
     }
 
-    private String mSdcardRootPath ;  //sdcard 根路径
-    private String mLastFilePath ;    //当前显示的路径
+    private String mSdcardRootPath ;
+    private String mCurFilePath ;
 
     private ArrayList<FileInfoModel> mFileLists  ;
     private FileChooseAdapter mAdatper ;
@@ -103,16 +105,15 @@ public class SunFileOpenActivity extends SunBaseActivity {
         setGridViewAdapter(mSdcardRootPath);
     }
 
-    //配置适配器
     private void setGridViewAdapter(String filePath) {
         updateFileItems(filePath);
         mAdatper = new FileChooseAdapter(this , mFileLists);
         fileListView.setAdapter(mAdatper);
     }
-    //根据路径更新数据，并且通知Adatper数据改变
+
     private void updateFileItems(String filePath) {
-        mLastFilePath = filePath ;
-        pathView.setText(mLastFilePath);
+        mCurFilePath = filePath ;
+        pathView.setText(mCurFilePath);
 
         if(mFileLists == null)
             mFileLists = new ArrayList<FileInfoModel>() ;
@@ -123,9 +124,9 @@ public class SunFileOpenActivity extends SunBaseActivity {
         if(files == null)
             return ;
         for (int i = 0; i < files.length; i++) {
-            if(files[i].isHidden())  // 不显示隐藏文件
+            if(files[i].isHidden()){
                 continue ;
-
+            }
             String fileAbsolutePath = files[i].getAbsolutePath() ;
             String fileName = files[i].getName();
             boolean isDirectory = false ;
@@ -133,60 +134,70 @@ public class SunFileOpenActivity extends SunBaseActivity {
                 isDirectory = true ;
             }
             FileInfoModel fileInfo = new FileInfoModel(fileAbsolutePath , fileName , isDirectory) ;
-            //添加至列表
+
             mFileLists.add(fileInfo);
         }
-        //When first enter , the object of mAdatper don't initialized
         if(mAdatper != null)
-            mAdatper.notifyDataSetChanged();  //重新刷新
+            mAdatper.notifyDataSetChanged();
     }
-    //获得当前路径的所有文件
+
     private File[] folderScan(String path) {
         File file = new File(path);
-        File[] files = file.listFiles();
+        File[] files = new File[0];
+        try{
+            files = file.listFiles();
+        }catch(Exception e) {
+        }
         return files;
     }
     private AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
-        public void onItemClick(AdapterView<?> adapterView, View view, int position,
-                                long id) {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
             FileInfoModel fileInfo = (FileInfoModel)((adapterView.getAdapter()).getItem(position));
             if(fileInfo.isDirectory){
                 updateFileItems(fileInfo.absolutePath);
             } else {
                 if(isFileSupported(fileInfo.absolutePath)) {
-                    Intent data = new Intent();
-                    data.putExtra(SunFileOpenManager.FILE_PATH, fileInfo.absolutePath);
-                    setResult(RESULT_OK, data);
+                    Intent dataIntent = new Intent();
+                    Bundle dataBundle = new Bundle();
+                    dataBundle.putString(SunFileOpenManager.FILE_PATH, fileInfo.absolutePath);
+                    dataIntent.putExtras(dataBundle);
+                    setResult(RESULT_OK, dataIntent);
                     finish();
                 }
             }
         }
     };
+
+    @Override
     public boolean onKeyDown(int keyCode , KeyEvent event){
-        if(event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode()
-                == KeyEvent.KEYCODE_BACK){
+        if(event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_BACK){
             backProcess();
             return true ;
         }
         return super.onKeyDown(keyCode, event);
     }
-    //返回上一层目录的操作
-    public void backProcess(){
-        //判断当前路径是不是sdcard路径 ， 如果不是，则返回到上一层。
-        if (!mLastFilePath.equals(mSdcardRootPath)) {
-            File thisFile = new File(mLastFilePath);
-            String parentFilePath = thisFile.getParent();
+
+    private void backProcess(){
+        File thisFile = new File(mCurFilePath);
+        String parentFilePath = thisFile.getParent();
+        //If the current path has a parent, open the parent
+        if(!StringUtil.emptyOrNull(parentFilePath)){
             updateFileItems(parentFilePath);
         }
-        else {   //是sdcard路径 ，直接结束
+        else {//if not, cancel file opening
             setResult(RESULT_CANCELED);
             finish();
         }
     }
 
     private boolean isFileSupported(String filePath) {
+        //TODO:txt only currently,make it configurable
         boolean isSupported = false;
-        String path_segments[] = filePath.split(".");
+        String[] path_segments = filePath.split("\\.");
+        if(path_segments.length == 0) {
+            return isSupported;
+        }
         if(path_segments[path_segments.length-1].equalsIgnoreCase("txt")) {
             isSupported = true;
         }
