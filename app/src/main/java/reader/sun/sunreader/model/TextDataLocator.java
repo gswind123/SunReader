@@ -13,6 +13,15 @@ public class TextDataLocator extends DataLocator {
     public int mStartIndex = 0;
     public int mEndIndex = 0;
 
+    public TextDataLocator() {
+        this(0, 0);
+    }
+
+    public TextDataLocator(int start, int end) {
+        mStartIndex = start;
+        mEndIndex = end;
+    }
+
     @Override
     public Object clone() {
         TextDataLocator res = new TextDataLocator();

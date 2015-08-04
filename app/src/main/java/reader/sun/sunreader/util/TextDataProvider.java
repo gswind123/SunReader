@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import reader.sun.common.DataProvider;
 import reader.sun.common.model.DataLocator;
 import reader.sun.common.model.DataModel;
+import reader.sun.sunreader.model.ReaderConstantValue;
+import reader.sun.sunreader.model.TextBookInfo;
 import reader.sun.sunreader.model.TextDataLocator;
 import reader.sun.sunreader.model.TextDataModel;
 import reader.sun.sunreader.widget.SunTextPaperView;
@@ -20,10 +22,53 @@ import reader.sun.sunreader.widget.SunTextPaperView;
 public class TextDataProvider implements DataProvider {
     /** Data in memory */
     private String mData = "";
+    private TextBookInfo mBookInfo = null;
+    private TextDataLocator mMemDataLocator = new TextDataLocator(0, ReaderConstantValue.TextCapacity);
+
+    public TextDataProvider(TextBookInfo bookInfo) {
+        this.mBookInfo = bookInfo;
+    }
 
     @Override
     public void parseFileToMem(File srcFile, DataLocator locator) {
         //TODO:load txt file into mData
+
+    }
+
+    /**
+     * outer locators base on the char offset of the whole book
+     * inner locators base on the char offset of mData
+     */
+    private TextDataLocator inner2Outer(TextDataLocator innerLocator) {
+        int start = mMemDataLocator.mStartIndex;
+        return new TextDataLocator(innerLocator.mStartIndex + start, innerLocator.mEndIndex + start);
+    }
+    private TextDataLocator outer2Inner(TextDataLocator outerLocator) {
+        int start = mMemDataLocator.mStartIndex;
+        return new TextDataLocator(outerLocator.mStartIndex + start, outerLocator.mEndIndex + start);
+    }
+
+    private void updateMemData(DataLocator outerLocator) {
+        if(!(outerLocator instanceof TextDataLocator)) {
+            return ;
+        }
+        TextDataLocator pageLocator = (TextDataLocator)outerLocator;
+        //if data enough for current page locator
+        int threshold = ReaderConstantValue.TextCapacity>>4;
+        int start_start = pageLocator.mStartIndex - mMemDataLocator.mStartIndex;
+        int end_end = mMemDataLocator.mEndIndex - pageLocator.mEndIndex;
+        int dataLeft = Math.min(start_start, end_end);
+        dataLeft = Math.max(dataLeft, 0);
+        if(dataLeft > threshold) {
+            return ;
+        }
+        //else we need to load data
+        int newStart = Math.max(0, pageLocator.mStartIndex - (ReaderConstantValue.TextCapacity>>1));
+        int tailExtendDis = ReaderConstantValue.TextCapacity - (pageLocator.mStartIndex - newStart);
+        int newEnd = pageLocator.mEndIndex + tailExtendDis;
+        TextDataLocator newLocator = new TextDataLocator(newStart, newEnd);
+        File srcFile = new File(mBookInfo.mFilePath);
+        parseFileToMem(srcFile, newLocator);
     }
 
     @Override
@@ -32,7 +77,7 @@ public class TextDataProvider implements DataProvider {
         if(!(locator instanceof TextDataLocator)) {
             return resultModel;
         }
-        TextDataLocator txtLocator = (TextDataLocator)locator;
+        TextDataLocator txtLocator = outer2Inner((TextDataLocator)locator);
         int start = txtLocator.mStartIndex;
         int end = txtLocator.mEndIndex;
         start = Math.max(start, 0);
@@ -44,18 +89,6 @@ public class TextDataProvider implements DataProvider {
         }
         resultModel.mTextData = mData.substring(start, end);
         return resultModel;
-    }
-
-    public boolean reachStart(TextDataLocator locator) {
-        if(locator.mStartIndex <= 0) {
-            return true;
-        } else return false;
-    }
-
-    public boolean reachEnd(TextDataLocator locator) {
-        if(locator.mEndIndex >= mData.length()) {
-            return true;
-        } else return false;
     }
 
     /**
@@ -108,7 +141,7 @@ public class TextDataProvider implements DataProvider {
             }
         }
         locator.mEndIndex = endIndex;
-        return locator;
+        return inner2Outer(locator);
     }//createPageFullLocatorFromStart
 
     /**
@@ -205,7 +238,7 @@ public class TextDataProvider implements DataProvider {
         if(locator.mStartIndex == 0) {
             locator = createPageFullLocatorFromStart(0, page);
         }
-        return locator;
+        return inner2Outer(locator);
     }//createPageFullLocatorFromEnd
 
 }
