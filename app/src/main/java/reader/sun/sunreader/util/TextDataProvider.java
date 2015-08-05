@@ -1,10 +1,14 @@
 package reader.sun.sunreader.util;
 
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.View;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 import reader.sun.common.DataProvider;
 import reader.sun.common.model.DataLocator;
@@ -23,16 +27,65 @@ public class TextDataProvider implements DataProvider {
     /** Data in memory */
     private String mData = "";
     private TextBookInfo mBookInfo = null;
-    private TextDataLocator mMemDataLocator = new TextDataLocator(0, ReaderConstantValue.TextCapacity);
+    private TextDataLocator mMemDataLocator = new TextDataLocator(0, 0);
 
     public TextDataProvider(TextBookInfo bookInfo) {
         this.mBookInfo = bookInfo;
     }
 
+    /**
+     * Read a part of srcFile into memory
+     * WARNING:make sure srcFile exists
+     * @param srcFile:the source file | locator: data locator for the memory part
+     */
     @Override
     public void parseFileToMem(File srcFile, DataLocator locator) {
-        //TODO:load txt file into mData
-
+        if(!(locator instanceof TextDataLocator) || locator.isEmpty()) {
+            return ;
+        }
+        TextDataLocator memLocator = (TextDataLocator)locator;
+        //find the nearest start and end byte offset to read file
+        int startByteOffset = 0;
+        int endByteOffset = (int)mBookInfo.mLengthInByte;
+        int startCharDis = (int)mBookInfo.mLengthInByte;
+        int endCharDis = (int)mBookInfo.mLengthInByte;
+        for(Map.Entry<Integer, Integer> entry : mBookInfo.mChar2Byte.entrySet()) {
+            int charOffset = entry.getKey();
+            if(charOffset <= memLocator.mStartIndex) {
+                int dis = memLocator.mStartIndex - charOffset;
+                if(dis < startCharDis) {
+                    startCharDis = dis;
+                    startByteOffset = entry.getValue();
+                    mMemDataLocator.mStartIndex = charOffset;
+                }
+            }
+            if(charOffset >= memLocator.mEndIndex) {
+                int dis = charOffset - memLocator.mEndIndex;
+                if(dis < endCharDis) {
+                    endCharDis = dis;
+                    endByteOffset = entry.getValue();
+                    mMemDataLocator.mEndIndex = charOffset;
+                }
+            }
+        }
+        int byteCount = endByteOffset - startByteOffset;
+        //read file according to the byte offset
+        try{
+            FileInputStream fin = new FileInputStream(srcFile);
+            fin.skip(startByteOffset);
+            byte[] buffer = new byte[byteCount];
+            int size = fin.read(buffer, 0, byteCount);
+            if(size != buffer.length && size != 0) {
+                byte[] tmpBuffer = new byte[size];
+                for(int i=0;i<size;i++) {
+                    tmpBuffer[i] = buffer[i];
+                }
+                buffer = tmpBuffer;
+            }
+            mData = new String(buffer);
+        }catch(IOException e) {
+            Log.e("TextDataProvider for "+mBookInfo.mBookName, e.getMessage());
+        }
     }
 
     /**
@@ -73,6 +126,8 @@ public class TextDataProvider implements DataProvider {
 
     @Override
     public DataModel readData(DataLocator locator) {
+        updateMemData(locator);
+
         TextDataModel resultModel = new TextDataModel();
         if(!(locator instanceof TextDataLocator)) {
             return resultModel;
@@ -97,6 +152,8 @@ public class TextDataProvider implements DataProvider {
     * @return a page-filled locator
     * */
     public TextDataLocator createPageFullLocatorFromStart(int startIndex, SunTextPaperView page) {
+        updateMemData(new TextDataLocator(startIndex, startIndex));
+
         TextDataLocator locator = new TextDataLocator();
         startIndex = Math.max(0, startIndex);
         startIndex = Math.min(startIndex, mData.length()-1);
@@ -150,6 +207,8 @@ public class TextDataProvider implements DataProvider {
      * @return a page-filled locator
      * */
     public TextDataLocator createPageFullLocatorFromEnd(int endIndex, SunTextPaperView page) {
+        updateMemData(new TextDataLocator(endIndex, endIndex));
+
         TextDataLocator locator = new TextDataLocator();
         endIndex = Math.max(1, endIndex);
         endIndex = Math.min(endIndex, mData.length());

@@ -1,4 +1,4 @@
-package reader.sun.sunreader.fragment;
+package reader.sun.common;
 
 import android.support.v4.app.Fragment;
 

@@ -9,11 +9,14 @@ import android.util.DisplayMetrics;
 import reader.sun.common.SunUserConfig;
 import reader.sun.common.foundation.util.StringUtil;
 import reader.sun.common.foundation.util.SunDeviceUtil;
+import reader.sun.common.model.DataModel;
 import reader.sun.common.widget.SunPaperView;
 import reader.sun.sunreader.model.TextDataLocator;
 import reader.sun.sunreader.model.TextDataModel;
 
 /**
+ * Paper page view for full-text data
+ * Use {#setDataLoader} to provide data
  * Created by yw_sun on 2015/7/17.
  */
 public class SunTextPaperView extends SunPaperView {
@@ -39,7 +42,13 @@ public class SunTextPaperView extends SunPaperView {
 
     @Override
     protected void loadData() {
-
+        DataModel rawData = null;
+        if(mDataLoader != null) {
+            rawData = mDataLoader.readDataModel(mCurrentLocator);
+        }
+        if(rawData!=null && (rawData instanceof TextDataModel)) {
+            mPageContent = (TextDataModel)rawData;
+        }
     }
 
     private void drawLine(Canvas canvas,String text, int startX, int startY, int lineHeight,Paint.FontMetrics fm, Paint paint) {

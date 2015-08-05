@@ -7,7 +7,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import reader.sun.common.SunBaseFragment;
+import reader.sun.common.model.DataLocator;
+import reader.sun.common.model.DataModel;
+import reader.sun.common.widget.SunPaperView;
 import reader.sun.sunreader.R;
+import reader.sun.sunreader.model.TextBookInfo;
 import reader.sun.sunreader.model.TextDataLocator;
 import reader.sun.sunreader.util.TextDataProvider;
 import reader.sun.sunreader.widget.SunTextPaperView;
@@ -16,11 +21,12 @@ import reader.sun.sunreader.widget.SunTextPaperView;
 /**
  * Created by yw_sun on 2015/7/16.
  */
-public class SunReaderFragment extends SunBaseFragment{
+public class SunTextReaderFragment extends SunBaseFragment {
     private View mRootView = null;
     private SunTextPaperView mUpperPage = null;
     private SunTextPaperView mUnderPage = null;
-    private TextDataProvider mCurrentBook = null;
+    private TextDataProvider mDataProvider = null;
+    private TextBookInfo mCurrentBook = null;
 
     private GestureDetector mGestureDetector;
     private GestureDetector.OnGestureListener mGestureDetectorListener = new GestureDetector.OnGestureListener() {
@@ -57,7 +63,7 @@ public class SunReaderFragment extends SunBaseFragment{
     };
 
 
-    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+    private View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             return mGestureDetector.onTouchEvent(motionEvent);
@@ -73,25 +79,53 @@ public class SunReaderFragment extends SunBaseFragment{
     }
 
     private void initView() {
+        mRootView.setOnTouchListener(mOnTouchListener);
         mUpperPage = (SunTextPaperView)mRootView.findViewById(R.id.upper_page);
         mUnderPage = (SunTextPaperView)mRootView.findViewById(R.id.under_page);
         mGestureDetector = new GestureDetector(getActivity(), mGestureDetectorListener);
     }
 
+    private SunPaperView.PaperDataLoader mDataLoader4Paper = new SunPaperView.PaperDataLoader() {
+        @Override
+        public DataModel readDataModel(DataLocator locator) {
+            if(mDataProvider==null || !(locator instanceof TextDataLocator)) {
+                return null;
+            }
+            TextDataLocator curLocator = (TextDataLocator)locator;
+            if(curLocator.isEmpty()) {
+                locator = mDataProvider.createPageFullLocatorFromStart(curLocator.mStartIndex, mUpperPage);
+            }
+            return mDataProvider.readData(locator);
+        }
+    };
+
     private void initData() {
-        mCurrentBook = new TextDataProvider();
-        mUpperPage.setLocator(new TextDataLocator());
+        mUpperPage.setDataLoader(mDataLoader4Paper);
+        mUnderPage.setDataLoader(mDataLoader4Paper);
+        if(mCurrentBook != null) {
+            mDataProvider = new TextDataProvider(mCurrentBook);
+            mUpperPage.setLocator(mCurrentBook.mLastLocator);
+        }
     }
 
     public void goNextPage() {
         TextDataLocator curLocator = (TextDataLocator)mUpperPage.getLocator();
-        TextDataLocator nextLocator = mCurrentBook.createPageFullLocatorFromStart(curLocator.mEndIndex,mUpperPage);
+        TextDataProvider provider = mDataProvider;
+        TextDataLocator nextLocator = provider.createPageFullLocatorFromStart(curLocator.mEndIndex,mUpperPage);
         mUpperPage.setLocator(nextLocator);
     }
     public void goPrevPage() {
         TextDataLocator curLocator = (TextDataLocator)mUpperPage.getLocator();
-        TextDataLocator nextLocator = mCurrentBook.createPageFullLocatorFromEnd(curLocator.mStartIndex, mUpperPage);
+        TextDataProvider provider = mDataProvider;
+        TextDataLocator nextLocator = provider.createPageFullLocatorFromEnd(curLocator.mStartIndex, mUpperPage);
         mUpperPage.setLocator(nextLocator);
+    }
+
+    public void setCurrentBook(TextBookInfo bookInfo) {
+        if(bookInfo == null) {
+            return ;
+        }
+        mCurrentBook = bookInfo;
     }
 
 }

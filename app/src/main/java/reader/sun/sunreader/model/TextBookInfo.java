@@ -9,6 +9,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -41,7 +42,8 @@ public class TextBookInfo extends BookInfo {
     static private final String TAG_BOOK = "BOOK";
     static private final String ATTR_BOOKNAME = "bookname";
     static private final String ATTR_FILEPATH = "filepath";
-    static private final String ATTR_LENGTHINBYTE = "lenght_in_byte";
+    static private final String ATTR_LENGTHINBYTE = "length_in_byte";
+    static private final String ATTR_LENGTHINCHAR = "length_in_char";
     static private final String ATTR_LASTCHARINDEX = "last_char_index";
 
     static private final String TAG_MAP = "MAP";
@@ -53,6 +55,7 @@ public class TextBookInfo extends BookInfo {
     public String mBookName = "";
     public String mFilePath = "";
     public long mLengthInByte = 0;
+    public long mLengthInChar = 0;
 
     /**
      * ChatIndex-to-Byte mapping array
@@ -64,6 +67,19 @@ public class TextBookInfo extends BookInfo {
 
     /** last-reading info*/
     public TextDataLocator mLastLocator = new TextDataLocator();
+
+    public TextBookInfo() {
+        super();
+    }
+
+    /**
+     * Get book info from serialized data
+     * @param data
+     */
+    public TextBookInfo(String data) {
+        ByteArrayInputStream in = new ByteArrayInputStream(data.getBytes());
+        load(in);
+    }
 
     @Override
     public void load(InputStream in) {
@@ -79,6 +95,7 @@ public class TextBookInfo extends BookInfo {
                 this.mBookName = attrMap.getNamedItem(ATTR_BOOKNAME).getNodeValue();
                 this.mFilePath = attrMap.getNamedItem(ATTR_FILEPATH).getNodeValue();
                 this.mLengthInByte = StringUtil.toInt(attrMap.getNamedItem(ATTR_LENGTHINBYTE).getNodeValue());
+                this.mLengthInChar = StringUtil.toInt(attrMap.getNamedItem(ATTR_LENGTHINCHAR).getNodeValue());
                 this.mLastLocator = new TextDataLocator();
                 this.mLastLocator.mStartIndex = StringUtil.toInt(attrMap.getNamedItem(ATTR_LASTCHARINDEX).getNodeValue());
             }
@@ -117,6 +134,7 @@ public class TextBookInfo extends BookInfo {
             book.setAttribute(ATTR_BOOKNAME, this.mBookName);
             book.setAttribute(ATTR_FILEPATH, this.mFilePath);
             book.setAttribute(ATTR_LENGTHINBYTE, this.mLengthInByte+"");
+            book.setAttribute(ATTR_LENGTHINCHAR, this.mLengthInChar+"");
             book.setAttribute(ATTR_LASTCHARINDEX, this.mLastLocator.mStartIndex+"");
             root.appendChild(book);
 

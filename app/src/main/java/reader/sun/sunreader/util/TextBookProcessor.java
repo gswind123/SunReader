@@ -51,6 +51,7 @@ public class TextBookProcessor {
                 }while(size == block);
                 bookInfo.mChar2Byte.put(curCharOffset, curByteOffset);
                 bookInfo.mLengthInByte = (long)curByteOffset;
+                bookInfo.mLengthInChar = (long)curCharOffset;
             }while(false);
         }catch(IOException e){}
         return bookInfo;

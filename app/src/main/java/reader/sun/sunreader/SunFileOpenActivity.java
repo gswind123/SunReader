@@ -18,8 +18,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import reader.sun.common.foundation.util.StringUtil;
+import reader.sun.common.foundation.util.SunFileOpenManager;
 import reader.sun.sunreader.model.FileInfoModel;
-import reader.sun.sunreader.util.SunFileOpenManager;
 
 /**
  * Activity for opening file

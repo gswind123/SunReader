@@ -1,10 +1,10 @@
-package reader.sun.sunreader.util;
+package reader.sun.common.foundation.util;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import reader.sun.sunreader.SunBaseActivity;
-import reader.sun.sunreader.fragment.SunBaseFragment;
+import reader.sun.common.SunBaseFragment;
 
 /**
  * Created by yw_sun on 2015/7/17.

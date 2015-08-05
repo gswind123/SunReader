@@ -2,17 +2,12 @@ package reader.sun.sunreader;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
+import reader.sun.common.foundation.util.SunFileOpenManager;
 import reader.sun.sunreader.model.TextBookInfo;
-import reader.sun.sunreader.util.SunFileOpenManager;
 import reader.sun.sunreader.util.TextBookProcessor;
 
 
@@ -41,16 +36,22 @@ public class SunEntranceActivity extends SunBaseActivity {
             String[] file_segs = fileName.split("\\/");
             String fileDir = fileName.replace(file_segs[file_segs.length-1],"");
             TextBookInfo bookInfo = TextBookProcessor.generateBookInfo(fileName);
-            try{
-                FileOutputStream out = new FileOutputStream(fileDir+"book_info_1.xml");
-                bookInfo.save(out);
-                TextBookInfo infoNew = new TextBookInfo();
-                FileInputStream in = new FileInputStream(fileDir+"book_info_1.xml");
-                infoNew.load(in);
-                bookInfo = infoNew;
-            }catch(IOException e) {
-                Log.e("SunEntranceActivity", e.getMessage());
-            }
+            Intent startReader = new Intent();
+            startReader.setClass(this, SunReaderActivity.class);
+            Bundle arguments = new Bundle();
+            arguments.putString(SunReaderActivity.KEY_SELECTED_BOOK, bookInfo.toString());
+            startReader.putExtras(arguments);
+            startActivity(startReader);
+//            try{
+//                FileOutputStream out = new FileOutputStream(fileDir+"book_info_1.xml");
+//                bookInfo.save(out);
+//                TextBookInfo infoNew = new TextBookInfo();
+//                FileInputStream in = new FileInputStream(fileDir+"book_info_1.xml");
+//                infoNew.load(in);
+//
+//            }catch(IOException e) {
+//                Log.e("SunEntranceActivity", e.getMessage());
+//            }
         }
     }
 

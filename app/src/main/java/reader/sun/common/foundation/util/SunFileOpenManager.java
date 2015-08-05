@@ -1,4 +1,4 @@
-package reader.sun.sunreader.util;
+package reader.sun.common.foundation.util;
 
 import android.content.Intent;
 
