@@ -10,23 +10,24 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Provide charset decoding and encoding tools
  * Created by yw_sun on 2015/8/10.
  */
 public class CharsetUtil {
-    private static HashMap<String,Charset> charsetMap = null;
+    private static ArrayList<Charset> charsetList = null;
     static {
-        charsetMap = new HashMap<String, Charset>();
+        //The order is important: UTF-16 will succeed for most charset, but
+        //mostly may be wrong
         String[] charsets = {"ASCII", "GBK", "UTF-8", "UTF-16"};
         for(String charsetStr : charsets) {
             Charset charset = Charset.forName(charsetStr);
             if(charset == null) {
                 continue;
             }
-            charsetMap.put(charsetStr, charset);
+            charsetList.add(charset);
         }
     }
 
@@ -90,7 +91,7 @@ public class CharsetUtil {
         byte[] startChars = new byte[2048];
         try{
             inStream.read(startChars, 0, 2048);
-            for(Charset charset : charsetMap.values()) {
+            for(Charset charset : charsetList) {
                 if(decode(startChars, null, charset) == true) {
                     resCharset = charset;
                     break;

@@ -23,7 +23,6 @@
   <component name="ChangeListManager">
     <list default="true" id="89644994-be8f-47af-b906-58e83564d0eb" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/reader/sun/common/foundation/util/CharsetUtil.java" afterPath="$PROJECT_DIR$/app/src/main/java/reader/sun/common/foundation/util/CharsetUtil.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/model/TextBookInfo.java" afterPath="$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/model/TextBookInfo.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/util/TextBookProcessor.java" afterPath="$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/util/TextBookProcessor.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/util/TextDataProvider.java" afterPath="$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/util/TextDataProvider.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
@@ -57,8 +56,8 @@
       <file leaf-file-name="CharsetUtil.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/reader/sun/common/foundation/util/CharsetUtil.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1861" max-vertical-offset="2750">
-              <caret line="81" column="22" selection-start-line="81" selection-start-column="14" selection-end-line="81" selection-end-column="22" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="2242" max-vertical-offset="2775">
+              <caret line="96" column="26" selection-start-line="96" selection-start-column="26" selection-end-line="96" selection-end-column="26" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -66,21 +65,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TextBookProcessor.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="TextBookProcessor.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/util/TextBookProcessor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="945" max-vertical-offset="1775">
-              <caret line="61" column="74" selection-start-line="61" selection-start-column="74" selection-end-line="61" selection-end-column="74" />
+            <state vertical-scroll-proportion="0.4496487" vertical-offset="658" max-vertical-offset="1775">
+              <caret line="42" column="24" selection-start-line="42" selection-start-column="24" selection-end-line="42" selection-end-column="24" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TextDataProvider.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="TextDataProvider.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/util/TextDataProvider.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.74246573" vertical-offset="683" max-vertical-offset="6850">
-              <caret line="69" column="39" selection-start-line="69" selection-start-column="39" selection-end-line="69" selection-end-column="39" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="1008" max-vertical-offset="6850">
+              <caret line="66" column="79" selection-start-line="66" selection-start-column="79" selection-end-line="66" selection-end-column="79" />
               <folding />
             </state>
           </provider>
@@ -89,8 +88,8 @@
       <file leaf-file-name="TextBookInfo.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/model/TextBookInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="136" max-vertical-offset="3600">
-              <caret line="42" column="59" selection-start-line="42" selection-start-column="59" selection-end-line="42" selection-end-column="59" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="1519" max-vertical-offset="3600">
+              <caret line="98" column="21" selection-start-line="98" selection-start-column="21" selection-end-line="98" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -1105,9 +1104,9 @@
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_sun_entrance.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/model/ReaderConstantValue.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/model/TextBookInfo.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/reader/sun/common/foundation/util/CharsetUtil.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/util/TextBookProcessor.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/util/TextDataProvider.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/util/TextBookProcessor.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/reader/sun/common/foundation/util/CharsetUtil.java" />
       </list>
     </option>
   </component>
@@ -1516,7 +1515,10 @@
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
     <property name="recentsLimit" value="5" />
-    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="192.168.56.102:5555" />
+    <property name="ANDROID_EXTENDED_DEVICE_CHOOSER_SERIALS" value="PHILIPS W732" />
+    <property name="DEBUGGABLE_DEVICE" value="philips-w732-PHILIPS W732" />
+    <property name="DEBUGGABLE_PROCESS" value="reader.sun.sunreader" />
+    <property name="SHOW_ALL_PROCESSES" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -1746,7 +1748,7 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32806325" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962519" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3992095" sideWeight="0.56746626" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3992095" sideWeight="0.56746626" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24962519" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1804,7 +1806,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="106" />
+      <option name="time" value="112" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -2176,36 +2178,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/model/TextBookInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1519" max-vertical-offset="3600">
+          <caret line="98" column="21" selection-start-line="98" selection-start-column="21" selection-end-line="98" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/reader/sun/common/foundation/util/CharsetUtil.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1861" max-vertical-offset="2750">
-          <caret line="81" column="22" selection-start-line="81" selection-start-column="14" selection-end-line="81" selection-end-column="22" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2242" max-vertical-offset="2775">
+          <caret line="96" column="26" selection-start-line="96" selection-start-column="26" selection-end-line="96" selection-end-column="26" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/model/TextBookInfo.java">
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/util/TextDataProvider.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="136" max-vertical-offset="3600">
-          <caret line="42" column="59" selection-start-line="42" selection-start-column="59" selection-end-line="42" selection-end-column="59" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1008" max-vertical-offset="6850">
+          <caret line="66" column="79" selection-start-line="66" selection-start-column="79" selection-end-line="66" selection-end-column="79" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/util/TextBookProcessor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="945" max-vertical-offset="1775">
-          <caret line="61" column="74" selection-start-line="61" selection-start-column="74" selection-end-line="61" selection-end-column="74" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/reader/sun/sunreader/util/TextDataProvider.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.74246573" vertical-offset="683" max-vertical-offset="6850">
-          <caret line="69" column="39" selection-start-line="69" selection-start-column="39" selection-end-line="69" selection-end-column="39" />
+        <state vertical-scroll-proportion="0.4496487" vertical-offset="658" max-vertical-offset="1775">
+          <caret line="42" column="24" selection-start-line="42" selection-start-column="24" selection-end-line="42" selection-end-column="24" />
           <folding />
         </state>
       </provider>

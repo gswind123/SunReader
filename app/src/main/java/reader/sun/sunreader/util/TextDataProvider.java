@@ -64,7 +64,7 @@ public class TextDataProvider implements DataProvider {
         try{
             FileInputStream fin = new FileInputStream(srcFile);
             fin.skip(startByteOffset);
-            InputStreamReader reader = new InputStreamReader(fin);
+            InputStreamReader reader = new InputStreamReader(fin, mBookInfo.mCharset);
             char[] buffer = new char[charCount];
             reader.read(buffer);
             mData = new String(buffer);

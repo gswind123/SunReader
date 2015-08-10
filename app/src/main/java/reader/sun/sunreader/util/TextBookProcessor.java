@@ -39,7 +39,7 @@ public class TextBookProcessor {
                 FileInputStream inStream = new FileInputStream(bookFile);
                 Charset encoding = CharsetUtil.detectCharset(inStream);
                 if(encoding != null) {
-                    bookInfo.mCharset = encoding.toString();
+                    bookInfo.mCharset = encoding.name();
                 } else {
                     bookInfo.mCharset = "ASCII";
                 }
