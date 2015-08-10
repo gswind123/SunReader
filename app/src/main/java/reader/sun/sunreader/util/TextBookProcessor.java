@@ -3,6 +3,7 @@ package reader.sun.sunreader.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import reader.sun.sunreader.model.ReaderConstantValue;
 import reader.sun.sunreader.model.TextBookInfo;
@@ -37,17 +38,18 @@ public class TextBookProcessor {
                 int curByteOffset = 0;
                 int curCharOffset = 0;
                 int block = ReaderConstantValue.TextCapacity;
-                byte[] buffer = new byte[block];
-                int size;
+                char[] charBuffer = new char[block];
+                InputStreamReader reader = new InputStreamReader(inStream);
                 bookInfo.mChar2Byte.clear();
+                int size = 0;
                 do{
-                    size = inStream.read(buffer, 0, block);
+                    size = reader.read(charBuffer,0,block);
                     if(size == 0) {
                         break;
                     }
                     bookInfo.mChar2Byte.put(curCharOffset, curByteOffset);
-                    curByteOffset += size;
-                    curCharOffset += (new String(buffer)).length();
+                    curByteOffset += charBuffer.toString().getBytes().length;
+                    curCharOffset += size;
                 }while(size == block);
                 bookInfo.mChar2Byte.put(curCharOffset, curByteOffset);
                 bookInfo.mLengthInByte = (long)curByteOffset;

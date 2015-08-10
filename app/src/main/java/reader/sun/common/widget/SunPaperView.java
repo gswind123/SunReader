@@ -56,9 +56,11 @@ public class SunPaperView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        hasMeasured = true;
-        //Initial updata data
-        loadData();
+        if(hasMeasured == false) {
+            hasMeasured = true;
+            //Initial updata data
+            loadData();
+        }
     }
 
 }

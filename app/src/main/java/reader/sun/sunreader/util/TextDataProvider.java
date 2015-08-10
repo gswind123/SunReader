@@ -72,7 +72,7 @@ public class TextDataProvider implements DataProvider {
         //read file according to the byte offset
         try{
             FileInputStream fin = new FileInputStream(srcFile);
-            fin.skip(startByteOffset);
+            //fin.skip(startByteOffset);
             byte[] buffer = new byte[byteCount];
             int size = fin.read(buffer, 0, byteCount);
             if(size != buffer.length && size != 0) {
