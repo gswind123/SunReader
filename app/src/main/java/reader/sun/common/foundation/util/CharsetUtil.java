@@ -19,6 +19,7 @@ import java.util.HashMap;
 public class CharsetUtil {
     private static HashMap<String,Charset> charsetMap = null;
     static {
+        charsetMap = new HashMap<String, Charset>();
         String[] charsets = {"ASCII", "GBK", "UTF-8", "UTF-16"};
         for(String charsetStr : charsets) {
             Charset charset = Charset.forName(charsetStr);
@@ -58,7 +59,7 @@ public class CharsetUtil {
                     decodedStr.append(charBuffer.toString());
                 }
                 charBuffer.clear();
-            }while(result == CoderResult.OVERFLOW);
+            }while(result != CoderResult.UNDERFLOW);
             byteBuffer.compact();
         }
         CoderResult result = null;
@@ -72,7 +73,7 @@ public class CharsetUtil {
                 decodedStr.append(charBuffer);
             }
             charBuffer.clear();
-        }while(result == CoderResult.UNDERFLOW);
+        }while(result != CoderResult.UNDERFLOW);
         return true;
     }
 
@@ -85,6 +86,18 @@ public class CharsetUtil {
         Charset resCharset = null;
         if(inStream == null) {
             return resCharset;
+        }
+        byte[] startChars = new byte[2048];
+        try{
+            inStream.read(startChars, 0, 2048);
+            for(Charset charset : charsetMap.values()) {
+                if(decode(startChars, null, charset) == true) {
+                    resCharset = charset;
+                    break;
+                }
+            }
+        }catch(IOException e) {
+            e.printStackTrace();
         }
         return resCharset;
     }

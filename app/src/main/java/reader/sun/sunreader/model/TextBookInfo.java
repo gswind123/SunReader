@@ -42,6 +42,7 @@ public class TextBookInfo extends BookInfo {
     static private final String TAG_BOOK = "BOOK";
     static private final String ATTR_BOOKNAME = "bookname";
     static private final String ATTR_FILEPATH = "filepath";
+    static private final String ATTR_CHARSET = "charset";
     static private final String ATTR_LENGTHINBYTE = "length_in_byte";
     static private final String ATTR_LENGTHINCHAR = "length_in_char";
     static private final String ATTR_LASTCHARINDEX = "last_char_index";
@@ -54,6 +55,7 @@ public class TextBookInfo extends BookInfo {
     /** Basic book info */
     public String mBookName = "";
     public String mFilePath = "";
+    public String mCharset = "";
     public long mLengthInByte = 0;
     public long mLengthInChar = 0;
 
@@ -94,6 +96,7 @@ public class TextBookInfo extends BookInfo {
                 NamedNodeMap attrMap = book.getAttributes();
                 this.mBookName = attrMap.getNamedItem(ATTR_BOOKNAME).getNodeValue();
                 this.mFilePath = attrMap.getNamedItem(ATTR_FILEPATH).getNodeValue();
+                this.mCharset = attrMap.getNamedItem(ATTR_CHARSET).getNodeValue();
                 this.mLengthInByte = StringUtil.toInt(attrMap.getNamedItem(ATTR_LENGTHINBYTE).getNodeValue());
                 this.mLengthInChar = StringUtil.toInt(attrMap.getNamedItem(ATTR_LENGTHINCHAR).getNodeValue());
                 this.mLastLocator = new TextDataLocator();
@@ -133,6 +136,7 @@ public class TextBookInfo extends BookInfo {
             Element book = doc.createElement(TAG_BOOK);
             book.setAttribute(ATTR_BOOKNAME, this.mBookName);
             book.setAttribute(ATTR_FILEPATH, this.mFilePath);
+            book.setAttribute(ATTR_CHARSET, this.mCharset);
             book.setAttribute(ATTR_LENGTHINBYTE, this.mLengthInByte+"");
             book.setAttribute(ATTR_LENGTHINCHAR, this.mLengthInChar+"");
             book.setAttribute(ATTR_LASTCHARINDEX, this.mLastLocator.mStartIndex+"");

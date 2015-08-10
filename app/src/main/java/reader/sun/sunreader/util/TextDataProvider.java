@@ -7,6 +7,7 @@ import android.view.View;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -46,9 +47,7 @@ public class TextDataProvider implements DataProvider {
         TextDataLocator memLocator = (TextDataLocator)locator;
         //find the nearest start and end byte offset to read file
         int startByteOffset = 0;
-        int endByteOffset = (int)mBookInfo.mLengthInByte;
         int startCharDis = (int)mBookInfo.mLengthInByte;
-        int endCharDis = (int)mBookInfo.mLengthInByte;
         for(Map.Entry<Integer, Integer> entry : mBookInfo.mChar2Byte.entrySet()) {
             int charOffset = entry.getKey();
             if(charOffset <= memLocator.mStartIndex) {
@@ -59,29 +58,15 @@ public class TextDataProvider implements DataProvider {
                     mMemDataLocator.mStartIndex = charOffset;
                 }
             }
-            if(charOffset >= memLocator.mEndIndex) {
-                int dis = charOffset - memLocator.mEndIndex;
-                if(dis < endCharDis) {
-                    endCharDis = dis;
-                    endByteOffset = entry.getValue();
-                    mMemDataLocator.mEndIndex = charOffset;
-                }
-            }
         }
-        int byteCount = endByteOffset - startByteOffset;
         //read file according to the byte offset
+        int charCount = memLocator.mEndIndex - memLocator.mStartIndex;
         try{
             FileInputStream fin = new FileInputStream(srcFile);
-            //fin.skip(startByteOffset);
-            byte[] buffer = new byte[byteCount];
-            int size = fin.read(buffer, 0, byteCount);
-            if(size != buffer.length && size != 0) {
-                byte[] tmpBuffer = new byte[size];
-                for(int i=0;i<size;i++) {
-                    tmpBuffer[i] = buffer[i];
-                }
-                buffer = tmpBuffer;
-            }
+            fin.skip(startByteOffset);
+            InputStreamReader reader = new InputStreamReader(fin);
+            char[] buffer = new char[charCount];
+            reader.read(buffer);
             mData = new String(buffer);
         }catch(IOException e) {
             Log.e("TextDataProvider for "+mBookInfo.mBookName, e.getMessage());

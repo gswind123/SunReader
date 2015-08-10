@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
+import reader.sun.common.foundation.util.CharsetUtil;
 import reader.sun.sunreader.model.ReaderConstantValue;
 import reader.sun.sunreader.model.TextBookInfo;
 
@@ -33,13 +35,23 @@ public class TextBookProcessor {
                 String pathArray[] = filePath.split("\\/");
                 bookInfo.mBookName = pathArray[pathArray.length-1].split("\\.")[0];
 
-                //parse book char2byte and calc book length
+                //detect encoding charset
                 FileInputStream inStream = new FileInputStream(bookFile);
+                Charset encoding = CharsetUtil.detectCharset(inStream);
+                if(encoding != null) {
+                    bookInfo.mCharset = encoding.toString();
+                } else {
+                    bookInfo.mCharset = "ASCII";
+                }
+                inStream.close();
+                inStream = new FileInputStream(bookFile);
+                //parse book char2byte and calc book length
+
                 int curByteOffset = 0;
                 int curCharOffset = 0;
                 int block = ReaderConstantValue.TextCapacity;
                 char[] charBuffer = new char[block];
-                InputStreamReader reader = new InputStreamReader(inStream);
+                InputStreamReader reader = new InputStreamReader(inStream, encoding.toString());
                 bookInfo.mChar2Byte.clear();
                 int size = 0;
                 do{
@@ -48,7 +60,7 @@ public class TextBookProcessor {
                         break;
                     }
                     bookInfo.mChar2Byte.put(curCharOffset, curByteOffset);
-                    curByteOffset += charBuffer.toString().getBytes().length;
+                    curByteOffset += charBuffer.toString().getBytes(encoding.toString()).length;
                     curCharOffset += size;
                 }while(size == block);
                 bookInfo.mChar2Byte.put(curCharOffset, curByteOffset);
