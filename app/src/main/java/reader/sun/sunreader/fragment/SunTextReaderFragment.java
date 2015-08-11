@@ -93,7 +93,9 @@ public class SunTextReaderFragment extends SunBaseFragment {
             }
             TextDataLocator curLocator = (TextDataLocator)locator;
             if(curLocator.isEmpty()) {
-                locator = mDataProvider.createPageFullLocatorFromStart(curLocator.mStartIndex, mUpperPage);
+                TextDataLocator newLocator = mDataProvider.createPageFullLocatorFromStart(curLocator.mStartIndex, mUpperPage);
+                curLocator.mStartIndex = newLocator.mStartIndex;
+                curLocator.mEndIndex = newLocator.mEndIndex;
             }
             return mDataProvider.readData(locator);
         }
@@ -106,6 +108,7 @@ public class SunTextReaderFragment extends SunBaseFragment {
             mDataProvider = new TextDataProvider(mCurrentBook);
             mUpperPage.setLocator(mCurrentBook.mLastLocator);
         }
+        mUpperPage.refreshView();
     }
 
     public void goNextPage() {
@@ -113,12 +116,14 @@ public class SunTextReaderFragment extends SunBaseFragment {
         TextDataProvider provider = mDataProvider;
         TextDataLocator nextLocator = provider.createPageFullLocatorFromStart(curLocator.mEndIndex,mUpperPage);
         mUpperPage.setLocator(nextLocator);
+        mUpperPage.refreshView();
     }
     public void goPrevPage() {
         TextDataLocator curLocator = (TextDataLocator)mUpperPage.getLocator();
         TextDataProvider provider = mDataProvider;
         TextDataLocator nextLocator = provider.createPageFullLocatorFromEnd(curLocator.mStartIndex, mUpperPage);
         mUpperPage.setLocator(nextLocator);
+        mUpperPage.refreshView();
     }
 
     public void setCurrentBook(TextBookInfo bookInfo) {

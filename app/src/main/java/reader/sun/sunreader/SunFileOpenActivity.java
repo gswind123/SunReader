@@ -16,16 +16,51 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import reader.sun.common.foundation.util.StringUtil;
 import reader.sun.common.foundation.util.SunFileOpenManager;
 import reader.sun.sunreader.model.FileInfoModel;
 
 /**
- * Activity for opening file
+ * Activity for opening files
  * Created by yw_sun on 2015/7/16.
  */
 public class SunFileOpenActivity extends SunBaseActivity {
+    static public final int TYPE_TXT = 0x1;
+    static public final int TYPE_PDF = 0x2;
+    static public final int TYPE_PNG = 0x4;
+    static public final int TYPE_JPG = 0x8;
+
+    static public final String KEY_SUPPORT_TYPE = "key_support_type";
+
+    private HashSet<String> mSupportTypeSet = new HashSet<String>();
+
+    private void setSupportTypes(int flags) {
+        mSupportTypeSet.clear();
+        if((flags & TYPE_TXT) == TYPE_TXT) {
+            mSupportTypeSet.add("txt");
+        }
+        if((flags & TYPE_PDF) == TYPE_PDF) {
+            mSupportTypeSet.add("pdf");
+        }
+        if((flags & TYPE_PNG) == TYPE_PNG) {
+            mSupportTypeSet.add("png");
+        }
+        if((flags & TYPE_JPG) == TYPE_JPG) {
+            mSupportTypeSet.add("jpg");
+        }
+    }
+    private void setIconForFile(FileInfoModel file, ImageView image) {
+        String type = file.getType();
+        if(file.isDirectory()) {
+            image.setBackgroundResource(R.drawable.icon_file_folder);
+        } else if("txt".equals(type)){
+            image.setBackgroundResource(R.drawable.icon_text_file);
+        } else {
+            image.setBackgroundResource(R.drawable.icon_unhandle_file);
+        }
+    }
 
     protected class FileChooseAdapter extends BaseAdapter {
 
@@ -55,22 +90,31 @@ public class SunFileOpenActivity extends SunBaseActivity {
             return i;
         }
 
+        private class FileViewHolder{
+            TextView nameText;
+            ImageView iconImage;
+        }
+
         @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View itemView = inflater.inflate(R.layout.file_choose_list_view, null);
-            if(i<0 || i>=fileArray.size()) {
-                return itemView;
-            }
-            FileInfoModel file = fileArray.get(i);
-            TextView fileNameView = (TextView)itemView.findViewById(R.id.file_name);
-            ImageView fileIconView = (ImageView)itemView.findViewById(R.id.file_icon);
-            if(file.isDirectory) {
-                fileIconView.setBackgroundResource(R.drawable.icon_file_folder);
+        public View getView(int position, View convertView, ViewGroup viewGroup) {
+            FileViewHolder holder = null;
+            View itemView = null;
+            if(convertView == null) {
+                LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                itemView = inflater.inflate(R.layout.file_choose_list_view, null);
+                holder = new FileViewHolder();
+                holder.nameText = (TextView)itemView.findViewById(R.id.file_name);
+                holder.iconImage = (ImageView)itemView.findViewById(R.id.file_icon);
+                itemView.setTag(holder);
             } else {
-                fileIconView.setBackgroundResource(R.drawable.icon_text_file);
+                itemView = convertView;
+                holder = (FileViewHolder)itemView.getTag();
             }
-            fileNameView.setText(file.name);
+
+            FileInfoModel file = fileArray.get(position);
+
+            setIconForFile(file, holder.iconImage);
+            holder.nameText.setText(file.getName());
             return itemView;
         }
     }
@@ -88,6 +132,11 @@ public class SunFileOpenActivity extends SunBaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        Bundle arguments = getArguments();
+        if(arguments != null) {
+            int flags = arguments.getInt(KEY_SUPPORT_TYPE, 0);
+            setSupportTypes(flags);
+        }
         LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rootView = inflater.inflate(R.layout.file_open_activity_layout, null);
         setContentView(rootView);
@@ -143,10 +192,13 @@ public class SunFileOpenActivity extends SunBaseActivity {
 
     private File[] folderScan(String path) {
         File file = new File(path);
-        File[] files = new File[0];
+        File[] files = null;
         try{
             files = file.listFiles();
         }catch(Exception e) {
+        }
+        if(files == null) {
+            files = new File[0];
         }
         return files;
     }
@@ -154,13 +206,13 @@ public class SunFileOpenActivity extends SunBaseActivity {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
             FileInfoModel fileInfo = (FileInfoModel)((adapterView.getAdapter()).getItem(position));
-            if(fileInfo.isDirectory){
-                updateFileItems(fileInfo.absolutePath);
+            if(fileInfo.isDirectory()){
+                updateFileItems(fileInfo.getAbsolutePath());
             } else {
-                if(isFileSupported(fileInfo.absolutePath)) {
+                if(isFileSupported(fileInfo.getAbsolutePath())) {
                     Intent dataIntent = new Intent();
                     Bundle dataBundle = new Bundle();
-                    dataBundle.putString(SunFileOpenManager.FILE_PATH, fileInfo.absolutePath);
+                    dataBundle.putString(SunFileOpenManager.FILE_PATH, fileInfo.getAbsolutePath());
                     dataIntent.putExtras(dataBundle);
                     setResult(RESULT_OK, dataIntent);
                     finish();
@@ -192,13 +244,13 @@ public class SunFileOpenActivity extends SunBaseActivity {
     }
 
     private boolean isFileSupported(String filePath) {
-        //TODO:txt only currently,make it configurable
         boolean isSupported = false;
         String[] path_segments = filePath.split("\\.");
         if(path_segments.length == 0) {
             return isSupported;
         }
-        if(path_segments[path_segments.length-1].equalsIgnoreCase("txt")) {
+        String type = path_segments[path_segments.length-1].toLowerCase();
+        if(mSupportTypeSet.contains(type)) {
             isSupported = true;
         }
         return isSupported;

@@ -21,6 +21,7 @@ public class CharsetUtil {
     static {
         //The order is important: UTF-16 will succeed for most charset, but
         //mostly may be wrong
+        charsetList = new ArrayList<Charset>();
         String[] charsets = {"ASCII", "GBK", "UTF-8", "UTF-16"};
         for(String charsetStr : charsets) {
             Charset charset = Charset.forName(charsetStr);

@@ -9,7 +9,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -74,17 +73,9 @@ public class TextBookInfo extends BookInfo {
         super();
     }
 
-    /**
-     * Get book info from serialized data
-     * @param data
-     */
-    public TextBookInfo(String data) {
-        ByteArrayInputStream in = new ByteArrayInputStream(data.getBytes());
-        load(in);
-    }
-
     @Override
-    public void load(InputStream in) {
+    public BookIOResult load(InputStream in) {
+        String errorMsg = "";
         try {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
@@ -117,15 +108,22 @@ public class TextBookInfo extends BookInfo {
                 }
             }
         }catch(ParserConfigurationException e) {
-            Log.e("reader.sun.sunreader","TextBookInfo::"+mBookName+" ParserConfigurationException:"+e.getMessage());
+            errorMsg = "TextBookInfo::"+mBookName+" ParserConfigurationException:"+e.getMessage();
         }catch(IOException e) {
-            Log.e("reader.sun.sunreader","TextBookInfo::"+mBookName+" IOException:"+e.getMessage());
+            errorMsg = "TextBookInfo::"+mBookName+" IOException:"+e.getMessage();
         }catch(SAXException e) {
-            Log.e("reader.sun.sunreader","TextBookInfo::"+mBookName+" SAXException:"+e.getMessage());
+            errorMsg = "TextBookInfo::"+mBookName+" SAXException:"+e.getMessage();
         }
+        boolean hasError = !StringUtil.emptyOrNull(errorMsg);
+        BookIOResult result = new BookIOResult(hasError, errorMsg);
+        if(hasError) {
+            Log.e("reader.sun.sunreader", errorMsg);
+        }
+        return result;
     }
     @Override
-    public void save(OutputStream out) {
+    public BookIOResult save(OutputStream out) {
+        String errorMsg = "";
         try{
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -159,11 +157,17 @@ public class TextBookInfo extends BookInfo {
             StreamResult result = new StreamResult(writer);
             transformer.transform(source,result);
         }catch(ParserConfigurationException e){
-            Log.e("reader.sun.sunreader","TextBookInfo::"+mBookName+" ParserConfigurationException:"+e.getMessage());
+            errorMsg = "TextBookInfo::"+mBookName+" ParserConfigurationException:"+e.getMessage();
         }catch(TransformerConfigurationException e) {
-            Log.e("reader.sun.sunreader","TextBookInfo::"+mBookName+" TransformerConfigurationException:"+e.getMessage());
+            errorMsg = "TextBookInfo::"+mBookName+" TransformerConfigurationException:"+e.getMessage();
         }catch(TransformerException e) {
-            Log.e("reader.sun.sunreader","TextBookInfo::"+mBookName+" TransformerException:"+e.getMessage());
+            errorMsg = "TextBookInfo::"+mBookName+" TransformerException:"+e.getMessage();
         }
+        boolean hasError = !StringUtil.emptyOrNull(errorMsg);
+        BookIOResult result = new BookIOResult(hasError, errorMsg);
+        if(hasError) {
+            Log.e("reader.sun.sunreader", errorMsg);
+        }
+        return result;
     }
 }

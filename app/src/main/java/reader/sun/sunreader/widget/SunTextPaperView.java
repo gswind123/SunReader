@@ -9,9 +9,7 @@ import android.util.DisplayMetrics;
 import reader.sun.common.SunUserConfig;
 import reader.sun.common.foundation.util.StringUtil;
 import reader.sun.common.foundation.util.SunDeviceUtil;
-import reader.sun.common.model.DataModel;
 import reader.sun.common.widget.SunPaperView;
-import reader.sun.sunreader.model.TextDataLocator;
 import reader.sun.sunreader.model.TextDataModel;
 
 /**
@@ -23,11 +21,8 @@ public class SunTextPaperView extends SunPaperView {
     // lineHeight = textHeight * LineHeightFactor
     private final float LineHeightFactor = 1.1f;
 
-    private TextDataModel mPageContent = new TextDataModel();
     private Paint mTextPaint = new Paint();
     private Context mContext = null;
-
-    protected TextDataLocator mLocator = new TextDataLocator();
 
     public SunTextPaperView(Context context) {
         super(context);
@@ -38,17 +33,6 @@ public class SunTextPaperView extends SunPaperView {
         super(context, attributes);
         mContext = context;
         refreshConfig();
-    }
-
-    @Override
-    protected void loadData() {
-        DataModel rawData = null;
-        if(mDataLoader != null) {
-            rawData = mDataLoader.readDataModel(mCurrentLocator);
-        }
-        if(rawData!=null && (rawData instanceof TextDataModel)) {
-            mPageContent = (TextDataModel)rawData;
-        }
     }
 
     private void drawLine(Canvas canvas,String text, int startX, int startY, int lineHeight,Paint.FontMetrics fm, Paint paint) {
@@ -88,9 +72,10 @@ public class SunTextPaperView extends SunPaperView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         refreshConfig();
-        if(mPageContent.isEmpty()) {
+        if(!(mCurrentData instanceof TextDataModel)) {
             return ;
         }
+        TextDataModel data = (TextDataModel)mCurrentData;
         /**
          * IMPORTANT:The text-layout method is closely related to
          * {#createPageFullLocatorFromXXX} in {#TextDataProvider}.
@@ -111,7 +96,7 @@ public class SunTextPaperView extends SunPaperView {
         int endY = startY + pageHeight;
         int curX = startX;
         while(keep_draw) {
-            String cur_char = mPageContent.mTextData.charAt(index) + "";
+            String cur_char = data.mTextData.charAt(index) + "";
             int char_width = (int)mTextPaint.measureText(cur_char);
             boolean is_new_line = false;
             if(cur_char.equals("\n")) {
@@ -137,7 +122,7 @@ public class SunTextPaperView extends SunPaperView {
 
             if((startY + lineHeight)>endY) {
                 keep_draw = false;//page is full
-            } else if(index >= mPageContent.mTextData.length()) {
+            } else if(index >= data.mTextData.length()) {
                 keep_draw = false;
                 String line = sb.toString();
                 if(!StringUtil.emptyOrNull(line)) {

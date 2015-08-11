@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import reader.sun.common.foundation.util.SunFileOpenManager;
+import reader.sun.common.model.BookInfo;
 import reader.sun.sunreader.model.TextBookInfo;
 import reader.sun.sunreader.util.TextBookProcessor;
 
@@ -36,12 +37,9 @@ public class SunEntranceActivity extends SunBaseActivity {
             String[] file_segs = fileName.split("\\/");
             String fileDir = fileName.replace(file_segs[file_segs.length-1],"");
             TextBookInfo bookInfo = TextBookProcessor.generateBookInfo(fileName);
-            Intent startReader = new Intent();
-            startReader.setClass(this, SunReaderActivity.class);
             Bundle arguments = new Bundle();
-            arguments.putString(SunReaderActivity.KEY_SELECTED_BOOK, bookInfo.toString());
-            startReader.putExtras(arguments);
-            startActivity(startReader);
+            arguments.putString(SunReaderActivity.KEY_SELECTED_BOOK, BookInfo.serialize(bookInfo));
+            startActivity(SunReaderActivity.class, arguments);
 //            try{
 //                FileOutputStream out = new FileOutputStream(fileDir+"book_info_1.xml");
 //                bookInfo.save(out);
