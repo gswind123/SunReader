@@ -2,30 +2,83 @@ package reader.sun.sunreader;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import reader.sun.common.foundation.util.SunDeviceUtil;
 import reader.sun.common.foundation.util.SunFileOpenManager;
 import reader.sun.common.model.BookInfo;
+import reader.sun.common.view.HorizontalListView;
 import reader.sun.sunreader.model.TextBookInfo;
 import reader.sun.sunreader.util.TextBookProcessor;
 
 
 public class SunEntranceActivity extends SunBaseActivity {
 
+    private boolean adapterState = true;
+
+    private class DataAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return 10;
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            if(adapterState == true) {
+                ImageView image = new ImageView(SunEntranceActivity.this);
+                image.setBackgroundResource(R.drawable.icon_text_file);
+                return image;
+            }else {
+                TextView text = new TextView(SunEntranceActivity.this);
+                text.setText(i+"");
+                DisplayMetrics dm = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(dm);
+                text.setTextSize(SunDeviceUtil.getPixelFromDip(dm,30));
+                return text;
+            }
+        }
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sun_entrance);
         View hello = findViewById(R.id.hello_world);
+        HorizontalListView listView = (HorizontalListView)findViewById(R.id.h_list);
+        final DataAdapter adapter = new DataAdapter();
+        listView.setAdapter(adapter);
+        ImageView start = new ImageView(this);
+        start.setBackgroundResource(R.drawable.icon_text_file);
+        ImageView end = new ImageView(this);
+        end.setBackgroundResource(R.drawable.icon_file_folder);
+        listView.addHeadView(start);
+        listView.addTailView(end);
         hello.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SunFileOpenManager.goFileOpen(SunEntranceActivity.this);
-//                Intent intent = new Intent();
-//                intent.setClass(SunEntranceActivity.this, SunReaderActivity.class);
-//                startActivityForResult(intent,1);
+                adapterState = !adapterState;
+                adapter.notifyDataSetChanged();
+                //SunFileOpenManager.goFileOpen(SunEntranceActivity.this);
+
             }
         });
     }
@@ -40,16 +93,6 @@ public class SunEntranceActivity extends SunBaseActivity {
             Bundle arguments = new Bundle();
             arguments.putString(SunReaderActivity.KEY_SELECTED_BOOK, BookInfo.serialize(bookInfo));
             startActivity(SunReaderActivity.class, arguments);
-//            try{
-//                FileOutputStream out = new FileOutputStream(fileDir+"book_info_1.xml");
-//                bookInfo.save(out);
-//                TextBookInfo infoNew = new TextBookInfo();
-//                FileInputStream in = new FileInputStream(fileDir+"book_info_1.xml");
-//                infoNew.load(in);
-//
-//            }catch(IOException e) {
-//                Log.e("SunEntranceActivity", e.getMessage());
-//            }
         }
     }
 
