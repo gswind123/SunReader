@@ -20,6 +20,7 @@ import java.util.HashSet;
 
 import reader.sun.common.foundation.util.StringUtil;
 import reader.sun.common.foundation.util.SunFileOpenManager;
+import reader.sun.common.view.HorizontalListView;
 import reader.sun.sunreader.model.FileInfoModel;
 
 /**
@@ -119,15 +120,74 @@ public class SunFileOpenActivity extends SunBaseActivity {
         }
     }
 
+    private class FilePathAdapter extends  BaseAdapter{
+        private ArrayList<String> mPathList = new ArrayList<String>();
+
+        public FilePathAdapter(ArrayList<String> pathSeg) {
+            mPathList = pathSeg;
+        }
+
+        @Override
+        public int getCount() {
+            return mPathList.size();
+        }
+
+        @Override
+        public Object getItem(int index) {
+            //Item is the co-responding path of current seg
+            StringBuilder sb = new StringBuilder();
+            sb.append("/");
+            for(int i=0;i<=index;i++) {
+                sb.append(mPathList.get(i));
+                if(i != index) {
+                    sb.append("/");
+                }
+            }
+            return sb.toString();
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View itemView = convertView;
+            ViewHolder holder = null;
+            if(itemView != null) {
+                holder = (ViewHolder)itemView.getTag();
+            } else {
+                LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                itemView = inflater.inflate(R.layout.file_path_list_item, null);
+                holder = new ViewHolder();
+                holder.mFolderName = (TextView)itemView.findViewById(R.id.folder_name);
+                holder.mNextArrow = (ImageView)itemView.findViewById(R.id.next_arrow);
+                itemView.setTag(holder);
+            }
+            holder.mFolderName.setText(mPathList.get(position));
+            if(position == this.getCount()-1) {
+                holder.mNextArrow.setVisibility(View.GONE);
+            } else {
+                holder.mNextArrow.setVisibility(View.VISIBLE);
+            }
+            return itemView;
+        }
+        private class ViewHolder{
+            public TextView mFolderName;
+            public ImageView mNextArrow;
+        }
+    }
+
     private String mSdcardRootPath ;
     private String mCurFilePath ;
 
     private ArrayList<FileInfoModel> mFileLists  ;
     private FileChooseAdapter mAdatper ;
+    private FilePathAdapter mPathAdapter;
 
     private ListView fileListView;
-    private TextView pathView;
-    private ImageView backBtn;
+    private HorizontalListView mFilePathList;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -139,30 +199,38 @@ public class SunFileOpenActivity extends SunBaseActivity {
         }
         LayoutInflater inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rootView = inflater.inflate(R.layout.file_open_activity_layout, null);
-        setContentView(rootView);
-        fileListView = (ListView)rootView.findViewById(R.id.file_list);
-        pathView = (TextView)rootView.findViewById(R.id.current_path);
-        backBtn = (ImageView)rootView.findViewById(R.id.back_press_arrow);
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                backProcess();
-            }
-        });
-        fileListView.setOnItemClickListener(mItemClickListener);
-        mSdcardRootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        setGridViewAdapter(mSdcardRootPath);
+        initView(rootView);
     }
 
-    private void setGridViewAdapter(String filePath) {
+    private void initView(View rootView) {
+        setContentView(rootView);
+        fileListView = (ListView)rootView.findViewById(R.id.file_list);
+        fileListView.setOnItemClickListener(mItemClickListener);
+        mFilePathList = (HorizontalListView)rootView.findViewById(R.id.file_path_list_view);
+        mFilePathList.setOnItemClickListener(mOnPathClickListener);
+        mSdcardRootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        setFileListViewAdapter(mSdcardRootPath);
+    }
+
+    private void setFileListViewAdapter(String filePath) {
         updateFileItems(filePath);
         mAdatper = new FileChooseAdapter(this , mFileLists);
         fileListView.setAdapter(mAdatper);
     }
+    private void setFilePathAdapter(String filePath) {
+        ArrayList<String> pathSegList = new ArrayList<String>();
+        for(String seg : filePath.split("\\/")) {
+            if(!StringUtil.emptyOrNull(seg)) {
+                pathSegList.add(seg);
+            }
+        }
+        mPathAdapter = new FilePathAdapter(pathSegList);
+        mFilePathList.setAdapter(mPathAdapter);
+    }
 
     private void updateFileItems(String filePath) {
         mCurFilePath = filePath ;
-        pathView.setText(mCurFilePath);
+        setFilePathAdapter(filePath);
 
         if(mFileLists == null)
             mFileLists = new ArrayList<FileInfoModel>() ;
@@ -218,6 +286,17 @@ public class SunFileOpenActivity extends SunBaseActivity {
                     finish();
                 }
             }
+        }
+    };
+
+    private AdapterView.OnItemClickListener mOnPathClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+            if(position == adapterView.getAdapter().getCount()-1) {
+                return ;
+            }
+            String filePath = (String)adapterView.getAdapter().getItem(position);
+            setFileListViewAdapter(filePath);
         }
     };
 

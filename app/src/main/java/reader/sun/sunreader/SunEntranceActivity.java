@@ -75,9 +75,9 @@ public class SunEntranceActivity extends SunBaseActivity {
         hello.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                adapterState = !adapterState;
-                adapter.notifyDataSetChanged();
-                //SunFileOpenManager.goFileOpen(SunEntranceActivity.this);
+//                adapterState = !adapterState;
+//                adapter.notifyDataSetChanged();
+                SunFileOpenManager.goFileOpen(SunEntranceActivity.this);
 
             }
         });

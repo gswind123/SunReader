@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * ListView which is horizontal
+ * ListView  which shows horizontally
  * Created by yw_sun on 2015/8/12.
  */
 public class HorizontalListView extends AdapterView<BaseAdapter>
@@ -34,12 +34,30 @@ public class HorizontalListView extends AdapterView<BaseAdapter>
             return mHeadViewList.size()+mMainAdapter.getCount()+mTailViewList.size();
         }
         @Override
-        public Object getItem(int i) {
-            return null;
+        public Object getItem(int index) {
+            int headLength = mHeadViewList.size();
+            int bodyLength = mMainAdapter.getCount();
+            if(index < headLength) {
+                return null;
+            } else if(index < (headLength+bodyLength)) {
+                index -= headLength;
+                return mMainAdapter.getItem(index);
+            } else {
+                return null;
+            }
         }
         @Override
-        public long getItemId(int i) {
-            return 0;
+        public long getItemId(int index) {
+            int headLength = mHeadViewList.size();
+            int bodyLength = mMainAdapter.getCount();
+            if(index < headLength) {
+                return 0;
+            } else if(index < (headLength+bodyLength)) {
+                index -= headLength;
+                return mMainAdapter.getItemId(index);
+            } else {
+                return 0;
+            }
         }
         @Override
         public View getView(int index, View convertView, ViewGroup viewGroup) {
@@ -150,6 +168,18 @@ public class HorizontalListView extends AdapterView<BaseAdapter>
     }
 
     /**
+     * Bind a click listener on every item to trigger OnItemClick
+     */
+    private void bindClickListener(final View itemView, final int position, final long id) {
+        itemView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                HorizontalListView.this.performItemClick(itemView, position, id);
+            }
+        });
+    }
+
+    /**
      * Fill new views from the adapter to list
      * Notice that we know everything about the most left and right item
      */
@@ -161,6 +191,7 @@ public class HorizontalListView extends AdapterView<BaseAdapter>
                 mRecycler.remove(mLeftItemPos);
             }
             View child = mAdapter.getView(mLeftItemPos, convertView, this);
+            bindClickListener(child, mLeftItemPos, mAdapter.getItemId(mLeftItemPos));
             addAndMeaureChild(child, 0);
             mLeftItemCoord -= child.getMeasuredWidth();
         }
@@ -173,11 +204,12 @@ public class HorizontalListView extends AdapterView<BaseAdapter>
                 mRecycler.remove(mRightItemPos);
             }
             View child = mAdapter.getView(mRightItemPos, convertView, this);
+            bindClickListener(child, mRightItemPos, mAdapter.getItemId(mRightItemPos));
             addAndMeaureChild(child, -1);
             mRightItemCoord += child.getMeasuredWidth();
-        }
-        if(mRightItemPos == mAdapter.getCount()-1) {
-            mMaxX = (int)mRightItemCoord - getWidth();
+            if(mRightItemPos == mAdapter.getCount()-1) {
+                mMaxX = (int)Math.max(0, mRightItemCoord - getWidth());
+            }
         }
     }
     private void addAndMeaureChild(View child, int index){

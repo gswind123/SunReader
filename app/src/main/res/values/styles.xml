@@ -5,18 +5,23 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="text_16_000000">
+        <item name="android:textSize">16dip</item>
+        <item name="android:textColor">#ff333333</item>
+    </style>
+
     <style name="text_18_333333">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">18dip</item>
         <item name="android:textColor">#ff333333</item>
     </style>
 
     <style name="text_24_000000">
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">24dip</item>
         <item name="android:textColor">#ff000000</item>
     </style>
 
     <style name="text_28_000000">
-        <item name="android:textSize">28sp</item>
+        <item name="android:textSize">28dip</item>
         <item name="android:textColor">#ff000000</item>
     </style>
 

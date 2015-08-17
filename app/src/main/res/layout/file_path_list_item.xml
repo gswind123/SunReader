@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:background="@drawable/item_click_selector_azure"
+    android:gravity="center"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="5dip">
+    <TextView
+        android:id="@+id/folder_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/text_16_000000"
+        android:text="Home"/>
+    <ImageView
+        android:id="@+id/next_arrow"
+        android:layout_width="18dip"
+        android:layout_height="18dip"
+        android:background="@drawable/common_btn_right_arrow"/>
+</LinearLayout>
