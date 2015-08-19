@@ -23,6 +23,10 @@ public class SunPaperView extends View {
     protected DataLocator mCurrentLocator = new DataLocator();
     protected DataModel   mCurrentData = new DataModel();
 
+    /**
+     * Normally data will be set when view hasn't been created
+     * Set this flag to notify view to load data when {#onDraw}
+     */
     private boolean dataRefreshed = true;
 
     public SunPaperView(Context context) {
@@ -42,7 +46,7 @@ public class SunPaperView extends View {
 
 
     /**
-     * IMPORTANT:Child should set mDataLoader to load their own data
+     * IMPORTANT:mDataLoader should be set to load own data
      */
     protected PaperDataLoader mDataLoader = null;
     public void setDataLoader(PaperDataLoader loader) {

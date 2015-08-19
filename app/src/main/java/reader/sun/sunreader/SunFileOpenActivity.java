@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import reader.sun.common.SunUserConfig;
 import reader.sun.common.foundation.util.StringUtil;
 import reader.sun.common.foundation.util.SunFileOpenManager;
 import reader.sun.common.view.HorizontalListView;
@@ -208,8 +209,14 @@ public class SunFileOpenActivity extends SunBaseActivity {
         fileListView.setOnItemClickListener(mItemClickListener);
         mFilePathList = (HorizontalListView)rootView.findViewById(R.id.file_path_list_view);
         mFilePathList.setOnItemClickListener(mOnPathClickListener);
+        View btnCancel = rootView.findViewById(R.id.btn_cancel);
+        btnCancel.setOnClickListener(mOnFileSelectCancel);
         mSdcardRootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        setFileListViewAdapter(mSdcardRootPath);
+        String latestPath = SunUserConfig.loadLatestVisitedPath();
+        if(StringUtil.emptyOrNull(latestPath)) {
+            latestPath = mSdcardRootPath;
+        }
+        setFileListViewAdapter(latestPath);
     }
 
     private void setFileListViewAdapter(String filePath) {
@@ -226,6 +233,7 @@ public class SunFileOpenActivity extends SunBaseActivity {
         }
         mPathAdapter = new FilePathAdapter(pathSegList);
         mFilePathList.setAdapter(mPathAdapter);
+        mFilePathList.scrollToEnd();
     }
 
     private void updateFileItems(String filePath) {
@@ -309,6 +317,14 @@ public class SunFileOpenActivity extends SunBaseActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    private View.OnClickListener mOnFileSelectCancel = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            setResult(RESULT_CANCELED);
+            finish();
+        }
+    };
+
     private void backProcess(){
         File thisFile = new File(mCurFilePath);
         String parentFilePath = thisFile.getParent();
@@ -333,6 +349,14 @@ public class SunFileOpenActivity extends SunBaseActivity {
             isSupported = true;
         }
         return isSupported;
+    }
+
+    @Override
+    public void onDestroy() {
+        if(!StringUtil.emptyOrNull(mCurFilePath)) {
+            SunUserConfig.saveLatestVisitedPath(mCurFilePath);
+        }
+        super.onDestroy();
     }
 
 }

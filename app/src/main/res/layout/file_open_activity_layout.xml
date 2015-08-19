@@ -2,10 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <reader.sun.common.view.HorizontalListView
-        android:id="@+id/file_path_list_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="35dip"/>
+        android:layout_height="50dip"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+        android:background="@color/white">
+        <FrameLayout
+            android:id="@+id/btn_cancel"
+            android:layout_width="50dip"
+            android:layout_height="50dip"
+            android:background="@drawable/item_click_selector_azure">
+            <ImageView
+                android:layout_width="35dip"
+                android:layout_height="35dip"
+                android:src="@drawable/icon_black_circle_cross"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"/>
+        </FrameLayout>
+
+        <reader.sun.common.view.HorizontalListView
+            android:id="@+id/file_path_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
     <ListView
         android:id="@+id/file_list"
         android:layout_width="match_parent"

@@ -1,6 +1,7 @@
 package reader.sun.sunreader.widget;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
@@ -24,16 +25,37 @@ public class SunTextPaperView extends SunPaperView {
     private Paint mTextPaint = new Paint();
     private Context mContext = null;
 
+    private DataSetObserver mDataObserver = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            updateConfig();
+            postInvalidate();
+        }
+    };
+
     public SunTextPaperView(Context context) {
         super(context);
         mContext = context;
-        refreshConfig();
+        initConfig();
     }
     public SunTextPaperView(Context context, AttributeSet attributes) {
         super(context, attributes);
         mContext = context;
-        refreshConfig();
+        initConfig();
     }
+    private void initConfig() {
+        updateConfig();
+        SunUserConfig.attachPaperObserver(mDataObserver);
+    }
+    @Override
+    public void finalize() {
+        SunUserConfig.detachPaperObserver(mDataObserver);
+        try{
+            super.finalize();
+        }catch(Throwable e) {
+        }
+    }
+
 
     private void drawLine(Canvas canvas,String text, int startX, int startY, int lineHeight,Paint.FontMetrics fm, Paint paint) {
         float text_x = startX;
@@ -41,9 +63,9 @@ public class SunTextPaperView extends SunPaperView {
         canvas.drawText(text, text_x, text_y, paint);
     }
 
-    private void refreshConfig() {
+    private void updateConfig() {
         DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
-        int text_size = SunDeviceUtil.getPixelFromDip(dm, SunUserConfig.getPaperTextSizeSp());
+        int text_size = SunDeviceUtil.getPixelFromDip(dm, SunUserConfig.getPaperTextSizeDip());
         if(mTextPaint != null && mTextPaint.getTextSize() == text_size) {
             return ;
         }
@@ -71,7 +93,6 @@ public class SunTextPaperView extends SunPaperView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        refreshConfig();
         if(!(mCurrentData instanceof TextDataModel)) {
             return ;
         }

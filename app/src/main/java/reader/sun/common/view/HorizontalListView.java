@@ -13,6 +13,7 @@ import android.widget.Scroller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * ListView  which shows horizontally
@@ -31,17 +32,18 @@ public class HorizontalListView extends AdapterView<BaseAdapter>
 
         @Override
         public int getCount() {
-            return mHeadViewList.size()+mMainAdapter.getCount()+mTailViewList.size();
+            int mainCount = mMainAdapter==null?0:mMainAdapter.getCount();
+            return mHeadViewList.size()+mainCount+mTailViewList.size();
         }
         @Override
         public Object getItem(int index) {
             int headLength = mHeadViewList.size();
-            int bodyLength = mMainAdapter.getCount();
+            int bodyLength = mMainAdapter==null?0:mMainAdapter.getCount();
             if(index < headLength) {
                 return null;
             } else if(index < (headLength+bodyLength)) {
                 index -= headLength;
-                return mMainAdapter.getItem(index);
+                return mMainAdapter==null?null:mMainAdapter.getItem(index);
             } else {
                 return null;
             }
@@ -49,12 +51,12 @@ public class HorizontalListView extends AdapterView<BaseAdapter>
         @Override
         public long getItemId(int index) {
             int headLength = mHeadViewList.size();
-            int bodyLength = mMainAdapter.getCount();
+            int bodyLength = mMainAdapter==null?0:mMainAdapter.getCount();
             if(index < headLength) {
                 return 0;
             } else if(index < (headLength+bodyLength)) {
                 index -= headLength;
-                return mMainAdapter.getItemId(index);
+                return mMainAdapter==null?0:mMainAdapter.getItemId(index);
             } else {
                 return 0;
             }
@@ -62,12 +64,16 @@ public class HorizontalListView extends AdapterView<BaseAdapter>
         @Override
         public View getView(int index, View convertView, ViewGroup viewGroup) {
             int headLength = mHeadViewList.size();
-            int bodyLength = mMainAdapter.getCount();
+            int bodyLength = mMainAdapter==null?0:mMainAdapter.getCount();
             if(index < headLength) {
                 return mHeadViewList.get(index);
             } else if(index < (headLength+bodyLength)) {
                 index -= headLength;
-                return mMainAdapter.getView(index, convertView, viewGroup);
+                if(mMainAdapter == null) {
+                    return null;
+                } else {
+                    return mMainAdapter.getView(index, convertView, viewGroup);
+                }
             } else {
                 index -= headLength + bodyLength;
                 return mTailViewList.get(index);
@@ -130,18 +136,44 @@ public class HorizontalListView extends AdapterView<BaseAdapter>
         initView(context);
     }
 
+    private GestureDetector mGestureDetector = new GestureDetector(this);
+    /**
+     * Override {#dispatchTouchEvent} to prevent that children's
+     * {#onTouch} might return true and invalidate the parent's touch events
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if(super.dispatchTouchEvent(event)) {
+            onTouchEvent(event);
+        }
+        // else {#onTouchEvent} must be executed
+        return true;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent evt) {
+        super.onTouchEvent(evt);
+        if(mGestureDetector != null) {
+            mGestureDetector.onTouchEvent(evt);
+        }
+        //Don't catch event here, catch it in {#dispatchTouchEvent}
+        return false;
+    }
+
     private void initView(Context context) {
         mLeftItemCoord = getPaddingLeft();
         mRightItemCoord = mLeftItemCoord;
         mScroller = new Scroller(context);
         mMaxX = 0x7fffffff;
-        final GestureDetector gestureDetector = new GestureDetector(this);
-        this.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return gestureDetector.onTouchEvent(motionEvent);
-            }
-        });
+        layoutTest();
+    }
+
+    /**
+     * Detect the rage of current list by layouting
+     */
+    private void layoutTest() {
+        fillRightView(mMaxX);
+        removeAllViews();
     }
 
     @Override
@@ -164,6 +196,11 @@ public class HorizontalListView extends AdapterView<BaseAdapter>
             int childBottom = childTop + child.getMeasuredHeight();
             child.layout(childLeft, childTop, childRight, childBottom);
             startCoord = childRight;
+        }
+        //Do pending operations
+        while(!mOperationQueue.isEmpty()) {
+            Runnable runnable = mOperationQueue.poll();
+            runnable.run();
         }
     }
 
@@ -219,8 +256,8 @@ public class HorizontalListView extends AdapterView<BaseAdapter>
         }
         int width = getWidth() - getPaddingRight() - getPaddingLeft();
         int height = getHeight() - getPaddingBottom() - getPaddingTop();
-        int widthSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST);
-        int heightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST);
+        int widthSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.UNSPECIFIED);
+        int heightSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         child.measure(widthSpec, heightSpec);
         this.addViewInLayout(child, index, lp);
     }
@@ -269,6 +306,7 @@ public class HorizontalListView extends AdapterView<BaseAdapter>
         scrollTo(0, 0);
 
         removeAllViews();
+        layoutTest();
         invalidate();
         requestLayout();
     }
@@ -307,6 +345,21 @@ public class HorizontalListView extends AdapterView<BaseAdapter>
             dstX = mMaxX;
         }
         scrollTo(dstX, 0);
+    }
+
+    /**
+     * Cache some operations and do them after {#onLayout}
+     * This is to make sure some view operations is valid
+     */
+    private LinkedList<Runnable> mOperationQueue = new LinkedList<Runnable>();
+    public void scrollToEnd() {
+        mOperationQueue.offer(new Runnable() {
+            @Override
+            public void run() {
+                scrollBy(mMaxX);
+            }
+        });
+        requestLayout();
     }
 
     @Override

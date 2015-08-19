@@ -4,7 +4,7 @@
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="#cccccc"
+    android:background="#ffffff"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".SunEntranceActivity">
 
     <TextView
@@ -12,10 +12,5 @@
         android:text="@string/hello_world" android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <reader.sun.common.view.HorizontalListView
-        android:layout_below="@id/hello_world"
-        android:id="@+id/h_list"
-        android:layout_width="match_parent"
-        android:layout_height="200dip"
-        android:background="#aabbcc"/>
+
 </RelativeLayout>
