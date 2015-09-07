@@ -1,6 +1,7 @@
 package reader.sun.sunreader;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 import reader.sun.common.foundation.util.SunFragmentManager;
 import reader.sun.common.model.BookInfo;
@@ -28,6 +29,18 @@ public class SunReaderActivity extends SunBaseActivity{
         readerFragment = new SunTextReaderFragment();
         readerFragment.setCurrentBook(mTextBook);
         SunFragmentManager.initFragment(this, readerFragment);
+    }
+
+    public void showReaderMenu() {
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_MENU) {
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
